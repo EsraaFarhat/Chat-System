@@ -4,17 +4,17 @@ class MessagesController < ApplicationController
     before_action :set_message, only: [:show, :update, :destroy]
 
     def index
-       order_by = params[:orderBy]&.downcase || 'created_at'
-       order_direction = params[:order]&.downcase || 'desc'
+        order_by = params[:orderBy]&.downcase || 'created_at'
+        order_direction = params[:order]&.downcase || 'desc'
 
-       # Validate that order_by is a valid column name to prevent SQL injection
-       valid_columns = ['body', 'number', 'created_at', 'updated_at']
-       order_by = valid_columns.include?(order_by) ? order_by : 'created_at'
-       valid_directions = ['asc', 'desc']
-       order_direction = valid_directions.include?(order_direction) ? order_direction : 'desc'
+        # Validate that order_by is a valid column name to prevent SQL injection
+        valid_columns = ['body', 'number', 'created_at', 'updated_at']
+        order_by = valid_columns.include?(order_by) ? order_by : 'created_at'
+        valid_directions = ['asc', 'desc']
+        order_direction = valid_directions.include?(order_direction) ? order_direction : 'desc'
 
-       @messages = @chat.messages.order("#{order_by} #{order_direction}").all
-       render json: @messages.as_json(except: [:id, :chat_id])
+        @messages = @chat.messages.order("#{order_by} #{order_direction}").all
+        render json: @messages.as_json(except: [:id, :chat_id])
     end
   
     def show
@@ -22,31 +22,44 @@ class MessagesController < ApplicationController
     end
   
     def create
-      message_number = @chat.next_message_number
+        message_number = @chat.next_message_number
 
-      if message_number.present?
-        @message = @chat.messages.new(message_params.merge(number: message_number))
-        if @message.save
-          render json: @message.as_json(except: [:id, :chat_id]), status: :created
+        if message_number.present?
+            @message = @chat.messages.new(message_params.merge(number: message_number))
+            if @message.save
+            render json: @message.as_json(except: [:id, :chat_id]), status: :created
+            else
+            render json: { errors: @application.errors.full_messages.first }, status: :unprocessable_entity
+            end
         else
-          render json: { errors: @application.errors.full_messages.first }, status: :unprocessable_entity
+            render json: { error: 'Failed to acquire lock for message creation' }, status: :unprocessable_entity
         end
-      else
-        render json: { error: 'Failed to acquire lock for message creation' }, status: :unprocessable_entity
-      end
     end
   
     def update
-      if @message.update(message_params)
-        render json: @message.as_json(except: [:id, :chat_id])
-      else
-        render json: { errors: @application.errors.full_messages.first }, status: :unprocessable_entity
-      end
+        if @message.update(message_params)
+            render json: @message.as_json(except: [:id, :chat_id])
+        else
+            render json: { errors: @application.errors.full_messages.first }, status: :unprocessable_entity
+        end
     end
 
     def destroy
         @message.destroy
         head :no_content
+    end
+
+    def search
+        @messages = Message.search(params[:query], @chat.id)
+  
+        transformed_results = @messages.map do |result|
+          {
+            number: result["_source"]["number"],
+            body: result["_source"]["body"],
+            created_at: result["_source"]["created_at"]
+          }
+        end
+        render json: transformed_results
     end
   
     private

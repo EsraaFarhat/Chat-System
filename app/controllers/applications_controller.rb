@@ -13,11 +13,11 @@ class ApplicationsController < ApplicationController
         order_direction = valid_directions.include?(order_direction) ? order_direction : 'desc'
 
         @applications = Application.order("#{order_by} #{order_direction}").all
-        render json: @applications.as_json(except: [:id, :created_at, :updated_at])
+        render json: @applications.as_json(except: [:id])
     end
 
     def show
-        render json: @application.as_json(except: [:id, :created_at, :updated_at])
+        render json: @application.as_json(except: [:id])
     end
 
     def create
@@ -25,7 +25,7 @@ class ApplicationsController < ApplicationController
         @application.token = generate_unique_token
 
         if @application.save
-            render json: @application.as_json(except: [:id, :created_at, :updated_at]), status: :created
+            render json: @application.as_json(except: [:id]), status: :created
         else
             render json: { error: @application.errors.full_messages.first }, status: :unprocessable_entity
         end
@@ -33,9 +33,9 @@ class ApplicationsController < ApplicationController
 
     def update
         if @application.update(application_params)
-        render json: @application.as_json(except: [:id, :created_at, :updated_at])
+            render json: @application.as_json(except: [:id])
         else
-        render json: { errors: @application.errors.full_messages.first }, status: :unprocessable_entity
+            render json: { errors: @application.errors.full_messages.first }, status: :unprocessable_entity
         end
     end
 

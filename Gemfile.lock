@@ -92,11 +92,16 @@ GEM
       faraday (>= 1, < 3)
       multi_json
     erubi (1.12.0)
+    et-orbi (1.2.7)
+      tzinfo
     faraday (2.7.12)
       base64
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (3.0.2)
+    fugit (1.9.0)
+      et-orbi (~> 1, >= 1.2.7)
+      raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashie (5.0.0)
@@ -137,6 +142,7 @@ GEM
       stringio
     puma (5.6.7)
       nio4r (~> 2.0)
+    raabro (1.4.0)
     racc (1.7.3)
     rack (2.2.8)
     rack-test (2.1.0)
@@ -179,6 +185,15 @@ GEM
     reline (0.4.1)
       io-console (~> 0.5)
     ruby2_keywords (0.0.5)
+    sidekiq (7.2.0)
+      concurrent-ruby (< 2)
+      connection_pool (>= 2.3.0)
+      rack (>= 2.2.4)
+      redis-client (>= 0.14.0)
+    sidekiq-cron (1.12.0)
+      fugit (~> 1.8)
+      globalid (>= 1.0.1)
+      sidekiq (>= 6)
     stringio (3.1.0)
     thor (1.3.0)
     timeout (0.4.1)
@@ -202,6 +217,8 @@ DEPENDENCIES
   puma (~> 5.0)
   rails (~> 7.0.8)
   redlock
+  sidekiq
+  sidekiq-cron
   tzinfo-data
 
 RUBY VERSION

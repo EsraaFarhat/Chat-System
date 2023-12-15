@@ -1,0 +1,4 @@
+---
+'update_counts_worker':
+  cron: '*/30 * * * *' # Every 30 minutes
+  class: 'UpdateCountsWorker'

@@ -20,6 +20,10 @@ gem 'elasticsearch-model'
 
 gem 'elasticsearch-rails'
 
+gem "sidekiq"
+
+gem 'sidekiq-cron'
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 

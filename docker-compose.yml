@@ -9,6 +9,7 @@ services:
       MYSQL_DATABASE: your_database_name
       MYSQL_USER: your_database_user
       MYSQL_PASSWORD: your_database_password
+      MYSQL_HOST: db
     ports:
       - "3306:3306"
 
@@ -46,10 +47,11 @@ services:
     depends_on:
       - db
       - elasticsearch
+      - sidekiq
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: mysql2://root:3017991@db:3306/chat_system_development
+      DATABASE_URL: mysql2://your_database_user:your_database_password@db:3306/your_database_name
       REDIS_URL: redis://redis:6379/0
       ELASTICSEARCH_URL: http://elasticsearch:9200
     volumes:
